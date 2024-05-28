@@ -1,0 +1,6 @@
+spring:
+  profiles:
+    active: local
+server:
+  tomcat:
+    relaxed-query-chars: '[,]'

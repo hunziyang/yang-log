@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <springProperty scope="context" name="LOG_HOME" source="logging.file.path" defaultValue="/data/logs/module"/>
+
+    <property name="LOG_CHARSET" value="UTF-8" />
+    <property name="LOG_DIR" value="${LOG_HOME}/%d{yyyyMMdd}" />
+    <property name="LOG_MSG" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{requestUUID}] %-5level %logger - %msg%n"/>
+    <property name="MAX_FILE_SIZE" value="10MB" />
+    <property name="MAX_HISTORY" value="30"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender" profile="!local">
+        <!-- 输出的日志内容格式化-->
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>${LOG_MSG}</pattern>
+        </layout>
+    </appender>
+
+    <appender name="FILE_ALL" class="ch.qos.logback.core.rolling.RollingFileAppender" profile="!local">
+        <File>${LOG_HOME}/base_log.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_DIR}/log_%d{yyyyMMdd}_%i.log</FileNamePattern>
+            <MaxHistory>${MAX_HISTORY}</MaxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>${LOG_MSG}</pattern>
+        </layout>
+    </appender>
+
+    <springProfile name="!local">
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="FILE_ALL"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="local">
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
+
+</configuration>
